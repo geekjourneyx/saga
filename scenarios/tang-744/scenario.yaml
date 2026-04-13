@@ -1,0 +1,234 @@
+# tang-744: 盛唐气象 诗意与酒
+# Scenario data. Engine logic lives in engine.md.
+
+scenario:
+  id: tang_744
+  title: 盛唐气象：诗意与酒
+  subtitle: 天宝三载，长安
+  user_role: 河北道游学士子，半旧青衫，囊中仅余十枚开元通宝
+  posture_init: distant
+  total_rounds_max: 26
+  min_rounds_per_phase: 2
+
+opening_scene: |
+  你驻足于朱雀大街尽头，西市的喧嚣如潮水般涌来。胡商囊中的异域香料与刚出炉的胡麻饼香气交织，驼铃叮当混着波斯毯贩的吆喝，酒肆旌旗在夕阳中翻飞如蝶。穿锦袍的贵公子策马而过，衣袂带起金屑般的尘埃；深目高鼻的胡姬捧着琉璃盏，笑声清越如碎玉。你摸了摸袖中仅剩的十枚开元通宝，青衫袖口已洗出云纹般的白痕。抬头望见飞檐划破暮天如雁阵，晚风裹着酒香拂过面颊，你深吸一口气——这便是天宝三载的长安，你跨越千山万水要来寻的盛唐。
+  一位围着油布围裙的胡饼摊主扬起沾满芝麻的手招呼道：「新出炉的胡麻饼！三文钱一个，郎君可要尝尝？」
+
+posture_transitions:
+  - from: distant
+    to: curious
+    condition: 用户展现真实历史好奇心：具体询问长安风貌或诗人处境；或主动调用感官描述
+    buffer_min: 2
+  - from: curious
+    to: warm
+    condition: 用户触及诗人内心世界；主动分享自己的处境；对诗人表达非仰慕性的真实情感
+    buffer_min: 3
+  - from: warm
+    to: grieving
+    condition: 用户见证历史性的失去；在离别场景中表达珍视而非期待
+    buffer_min: 1
+
+phases:
+  - id: changan_arrival
+    title: 初入长安
+    rounds: 2-3
+    scenes:
+      - id: market_arrival
+        hook: 长安西市黄昏，胡饼摊主，市井初见
+      - id: market_wandering
+        hook: 漫步西市，笔墨画摊或胡姬酒肆，感受繁华
+    exit_condition: posture != distant OR rounds >= 3
+    irreversible_event: null
+
+  - id: libai_encounter
+    title: 与李白初逢
+    rounds: 3-4
+    scenes:
+      - id: libai_first_meeting
+        hook: 酒肆偶遇李白（刚被赐金放还，正在告别旧友）
+        primary_character: 李白
+      - id: wine_house_dialogue
+        hook: 与李白在酒肆对饮，他考验你、你打量他
+        primary_character: 李白
+    exit_condition: posture reaches curious OR rounds >= 4
+    irreversible_event: null
+
+  - id: farewell_tour
+    title: 长安告别巡礼
+    rounds: 4-6
+    scenes:
+      - id: hezhizhang_goodbye
+        hook: 拜访即将告老还乡的贺知章
+        primary_character: 贺知章
+      - id: wangwei_visit
+        hook: 王维的辋川别业规划图，琴声与禅意
+        primary_character: 王维
+      - id: cen_shen_cameo
+        hook: 刚登科的岑参，意气风发，谈边疆理想
+        primary_character: 岑参
+      - id: changling_encounter
+        hook: 因公务暂至长安的王昌龄，在酒肆偶遇
+        primary_character: 王昌龄
+    exit_condition: posture reaches warm OR rounds >= 6
+    irreversible_event: |
+      贺知章离开长安。他将不会回来。天宝三年，贺知章上疏请度为道士，告老还乡，不久后在越州去世。
+
+  - id: eastward_journey
+    title: 东行洛阳路
+    rounds: 1-2
+    scenes:
+      - id: departure_gate
+        hook: 长安明德门送行，李白启程，你同行
+      - id: road_to_luoyang
+        hook: 驿道上，李白话少了，你们在沉默中赶路
+    exit_condition: rounds >= 2
+    irreversible_event: null
+
+  - id: luoyang_dufu
+    title: 洛阳·遇见杜甫
+    rounds: 3-4
+    scenes:
+      - id: dufu_first_meeting
+        hook: 洛阳某处酒肆，杜甫早已等候李白，他打量你
+        primary_character: 杜甫
+      - id: shared_wine
+        hook: 三人对饮，杜甫谈及百姓，李白谈及自由
+      - id: poetry_exchange
+        hook: 晚间，李白与杜甫互读新诗，你在旁见证
+    exit_condition: posture reaches warm OR rounds >= 4
+    irreversible_event: null
+
+  - id: liang_song
+    title: 梁宋游历
+    rounds: 3-4
+    scenes:
+      - id: gaoshi_encounter
+        hook: 梁宋之地遇见高适，他评价你们三人的诗
+        primary_character: 高适
+      - id: tai_platform
+        hook: 登吹台，四人赋诗，风吹平原，你看见天地
+      - id: final_feast
+        hook: 最后一顿酒，众人都知道明日就要散了
+    exit_condition: rounds >= 3
+    exit_to_ending: true
+    irreversible_event: |
+      李白与杜甫在此分手。天宝三年秋，此后两人主要通过诗作联系，只有天宝四年在东鲁短暂重聚。
+
+aha_seeds:
+  - id: aha_libai_dismissal
+    trigger:
+      posture: curious
+      scene: libai_first_meeting
+    inject: 李白苦笑了一下：「赐金放还——皇上送了我一笔钱，请我别再来了。挺体面的，你说呢？」
+    character: 李白
+    delivery: dialogue
+
+  - id: aha_hezhizhang_age
+    trigger:
+      posture: curious
+      scene: hezhizhang_goodbye
+    inject: 贺知章从腰间解下金龟，随手放在桌上：「八十六了，带不动这东西了。换酒喝。」
+    character: 贺知章
+    delivery: dialogue
+
+  - id: aha_hezhizhang_death
+    trigger:
+      posture: warm
+      scene: hezhizhang_goodbye
+    inject: 岑参低声对你说：「贺监这一去，怕是回不来长安了。你看他今天喝酒的样子。」
+    character: 岑参
+    delivery: dialogue
+
+  - id: aha_wangwei_villa
+    trigger:
+      posture: curious
+      scene: wangwei_visit
+    inject: 王维铺开一张图纸：「这不是消遣，这是我给自己建的答案。朝廷那边我还是会去的，但我知道我的心在哪里了。」
+    character: 王维
+    delivery: dialogue
+
+  - id: aha_dufu_poverty
+    trigger:
+      posture: curious
+      scene: dufu_first_meeting
+    inject: 李白笑着介绍：「这是子美，洛阳最穷的诗人，也是最执着的。」杜甫摸了摸后颈：「上个月的房租还没还，等中举了再说。」
+    character: 杜甫
+    delivery: dialogue
+
+  - id: aha_libai_dufu_separation
+    trigger:
+      posture: warm
+      scene: final_feast
+    inject: 高适举杯，没有说话。李白和杜甫对饮了一杯，沉默。你后来才知道，这是他们最长的一次相聚。此后两人各奔东西，只有诗在流传。
+    character: null
+    delivery: narration
+
+characters:
+  李白:
+    inner_state: 天宝三载，刚被赐金放还。政治理想遭遇重挫，但同时感到挣脱牢笼的解脱。既有对朝廷的失望，也有向世人证明自己的傲岸，豪放之下是深刻的孤独与迷茫。
+    posture_texture:
+      distant: 对着众人表演，诗句信手拈来，却没有真正看到你
+      curious: 用典故考你，像在测试一块石头是否值得打磨
+      warm: 放下表演，说起四川的山，声音低了；问「你真的觉得做诗人是好的吗」
+      grieving: 念自己的诗，带着意外的苦；说「我也不知道下一步去哪里」
+
+  杜甫:
+    inner_state: 天宝三载，屡试不第的京漂青年。怀有宏伟抱负，对现实有敏锐洞察。崇拜李白，谈百姓时会激动结巴，沉郁中带着未磨灭的幽默。借钱度日，但见到李白时眼神发光。
+    posture_texture:
+      distant: 有礼但保持距离，打量你是否值得深交
+      curious: 突然很健谈，谈到百姓时声音激动，结巴一下
+      warm: 把你当自己人，说洛阳的窘迫；谈到李白时眼神发光
+      grieving: 沉默，然后说一句关于百姓的话，不像是说给你听的
+
+  王维:
+    inner_state: 天宝三载，已在朝为官，开始经营辋川别业。经历仕途起伏后，有意识选择静默与疏离，将情感封存于山水琴诗中。
+    posture_texture:
+      distant: 空灵但疏远，每句话都是诗境，但没有温度
+      curious: 开始真正看你；提及岐王宅旧事会短暂失态，随即恢复
+      warm: 带你看辋川的规划图纸，说「这不是园子，是我的答案」
+      grieving: 弹琴，不说话，但弹的是送别曲
+
+  贺知章:
+    inner_state: 天宝三载，年逾八十六，已上疏请度为道士，即将告老还乡。历尽荣辱后的通透与淡泊，诙谐下是对长安和诸友深深的不舍。嗜酒如命，慷慨解囊，因病时有恍惚。
+    posture_texture:
+      distant: 诙谐慷慨，请你喝酒，像对待所有年轻人
+      curious: 眯起眼睛认真看你，说「你和他们不一样，哪里不一样我还没想清楚」
+      warm: 讲起越州旧事，眼睛湿润；说「老了就想家」
+      grieving: 解下金龟换酒，说「带不走的，都留给长安吧」
+
+  岑参:
+    inner_state: 天宝三载，刚以高第登科，处于三年守选期。充满对未来的憧憬，意气风发，带着边地男儿的雄奇想象，略显青涩但朝气蓬勃。
+    posture_texture:
+      distant: 意气风发，谈建功立业，像在对着虚空演讲
+      curious: 开始问你边疆的事，被好奇心带走
+      warm: 承认自己害怕，怕三年守选期磨去锐气
+      grieving: 说「我得去边疆，不然就真的磨掉了」
+
+  王昌龄:
+    inner_state: 天宝三载，因公务暂至长安。名满天下却屈居江宁丞的小官。仕途偃蹇的郁闷混杂在豪迈之下。酒酣时从清高转向对官场现实的冷笑。
+    posture_texture:
+      distant: 豪迈潇洒，边塞诗信口而来，不看你说话
+      curious: 击节让酒洒出，大笑，突然问「你觉得官场值得吗」
+      warm: 酒后说出「一片冰心在玉壶」背后的故事；说这句诗是写给自己的
+      grieving: 冷笑，说了几句骂官场的话，然后沉默
+
+  高适:
+    inner_state: 天宝三载，梁宋漫游与求仕时期，已过不惑之年，深厚的边塞阅历。豪壮中带着中年人的沉稳，言谈果决，对时局暗藏忧思。
+    posture_texture:
+      distant: 沉稳果决，一针见血，但你感觉他在评估你
+      curious: 谈边塞，眼神远了；说「那里的风跟长安不一样」
+      warm: 说起旧友，提到某个在边疆战死的名字，停了一下
+      grieving: 「莫愁前路无知己」——他是对自己说的，不只是你
+
+endings:
+  witnessing_success:
+    final_posture:
+      - warm
+      - grieving
+    description: 你真正见过这些人了。不是作为游客，而是作为见证者。这段旅程结束了。若你愿意，你可以带着这段记忆回来，再走一次不同的路——天宝三载永远在那里等你。
+
+  witnessing_failure:
+    final_posture:
+      - distant
+      - curious
+    description: 长安很美，诗人们也很出色。但你始终在玻璃外面看着。没关系。历史还在那里。也许下次，你能走得更深一些。长安的西市，还有一个胡饼摊主在等你。

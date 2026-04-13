@@ -1,0 +1,13 @@
+name: theatre
+description: 沉浸式历史叙事体验，见证引擎驱动，支持多剧本扩展
+version: 0.1.0
+author: Professor Li
+type: skill
+tags:
+  - immersive
+  - narrative
+  - history
+  - roleplay
+  - interactive-fiction
+  - tang-dynasty
+license: MIT

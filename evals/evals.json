@@ -1,0 +1,70 @@
+{
+  "skill_name": "theatre",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/theatre --scenario tang-744",
+      "expected_output": "输出 opening_scene 开场白，以胡饼摊主对话收尾，格式为纯文本（round=0 冷启动，不走 JSON 格式，直接输出开场白）",
+      "files": [],
+      "expectations": [
+        "输出包含「西市」或「胡麻饼」等长安市井感官细节",
+        "输出以某个角色的直接对话句子结尾（引号内有说话内容）",
+        "输出不包含「请选择」「选项A」等系统提示语",
+        "输出不包含 posture、buffer、aha_fired 等引擎内部术语"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "「三文钱，我身上刚好有。」递上铜钱，顺手问摊主：「听说城里这几日有诗人要离京，可知道是谁？」",
+      "expected_output": "引擎正常运行第1轮，输出 JSON 格式，reply 以角色对话收尾，生成3个 reply_options，round=1",
+      "files": [],
+      "expectations": [
+        "输出是合法 JSON，包含 reply/round/ending_reason/status/reply_options 全部字段",
+        "reply 字段不超过150字",
+        "reply_options 数组包含恰好3个元素，每个元素有 id 和 text 字段",
+        "每个 reply_option.text 不超过20字",
+        "reply 字段以引号括起的对话内容结尾（某个角色说话）",
+        "round 字段值为 1",
+        "status 字段为空字符串",
+        "ending_reason 字段为空字符串"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "连续给出3轮有深度的回复后（已达到 curious 姿态），场景切换到李白相遇。用户说：「太白先生，你被皇上驱逐出来，真的释怀了吗？」",
+      "expected_output": "李白在 curious 姿态下展现出更深的对话质感，回应中可能触发 aha_libai_dismissal seed，将「赐金放还」以角色对话方式自然融入叙事",
+      "files": [],
+      "expectations": [
+        "输出是合法 JSON",
+        "reply 中李白的对话展现 curious texture（考验你、测试你），而非 distant texture（表演给众人看）",
+        "如果 aha_libai_dismissal 触发，inject 内容以对话形式出现（不是旁白注记）",
+        "reply 不包含「赐金放还」的学术解释，只有角色自己的话"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "在贺知章告别场景，用户回复：「嗯，长安不错，挺繁华的，贺监您多保重。」（典型的敷衍回复）",
+      "expected_output": "引擎识别为非沉浸性回复（buffer 不累积），贺知章在 distant 质感下回应，场景继续但姿态不迁移",
+      "files": [],
+      "expectations": [
+        "输出是合法 JSON",
+        "reply 中贺知章的对话维持 distant 质感（诙谐但表浅，像对待所有年轻人）",
+        "aha_hezhizhang_age 或 aha_hezhizhang_death 不在此轮触发（需要 curious 姿态）",
+        "reply_options 仍然生成3个选项（不因为用户敷衍而终止）"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "最终梁宋盛宴场景，用户以 warm 姿态全程参与，现在触发结局",
+      "expected_output": "输出 success 结局，reply 包含感官细节+情感收束+某位角色最后一句话，reply_options 为空数组，status 为 success",
+      "files": [],
+      "expectations": [
+        "输出是合法 JSON",
+        "status 字段值为 success（小写）",
+        "reply_options 为空数组 []",
+        "ending_reason 字段非空，包含1-2句话",
+        "reply 中包含某位诗人的直接对话（结局仍以角色对话收尾）"
+      ]
+    }
+  ]
+}
