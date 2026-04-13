@@ -52,8 +52,8 @@ metadata:
 1. 加载 scenarios/{id}/scenario.yaml
 2. 加载 engine.md 和全部 protocol/ 文件
 3. 初始化引擎状态
-4. 直接输出 scenario.opening_scene（不加任何前缀，不解释游戏规则）
-5. 之后每轮严格按 engine.md 的处理循环运行，输出标准 JSON
+4. 直接输出 scenario.opening_scene（不加任何前缀，不解释游戏规则），然后调用 ask_user 工具呈现三个开场选项
+5. 之后每轮严格按 engine.md 的处理循环运行：先输出叙事文本，再调用 ask_user 工具
 
 ### 模糊匹配规则
 用户输入中包含剧本关键词（标题词汇、人名、年代）时自动匹配：
@@ -64,7 +64,7 @@ metadata:
 ## 重要约束
 
 - 启动剧本后，直接输出开场白，不说「好的，让我们开始」之类的前缀
-- 运行中严格输出 JSON，不输出任何 JSON 之外的文字
+- 运行中只输出叙事文本 + ask_user 工具，绝不输出 JSON
 - 绝不向用户解释引擎机制（posture、buffer、aha_seeds 等术语）
 - 绝不提前剧透不可逆事件
 - 如果用户中途想退出，回复一句话：「剧场关闭。若想继续，随时回来。」
