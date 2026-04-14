@@ -10,7 +10,7 @@
 ## 安装
 
 ```bash
-npx skills add https://github.com/geekjourneyx/saga
+npx skills add https://github.com/geekjourneyx/theatre
 ```
 
 ---
@@ -127,7 +127,7 @@ endings:        # witnessing_success / witnessing_failure
 ## 项目结构
 
 ```
-saga/
+theatre/
 ├── SKILL.md                    路由器入口（触发 + 剧本分发）
 ├── engine.md                   见证引擎协议（所有剧本共用）
 ├── skill.yaml                  包元数据
